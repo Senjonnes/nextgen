@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const User = require("../model/User");
-const { signupValidation } = require("../utils/validation");
+const { signupValidation, loginValidation } = require("../utils/validation");
 
 router.post("/signup", async (req, res) => {
   const { error } = signupValidation(req.body);
@@ -8,6 +8,13 @@ router.post("/signup", async (req, res) => {
     return res
       .status(400)
       .send({ error: true, message: error?.details[0].message });
+
+  const userExist = await User.findOne({ email: req.body.email });
+  if (userExist)
+    return res
+      .status(409)
+      .send({ error: true, message: "Email already exist" });
+
   const user = new User({
     name: req.body.name,
     email: req.body.email,
