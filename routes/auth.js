@@ -62,8 +62,28 @@ router.post("/login", async (req, res) => {
       .status(401)
       .send({ error: true, message: "Invalid email or password" });
 
-  const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
+  const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET, {
+    expiresIn: parseInt(process.env.TOKEN_EXPIRATION_TIME),
+  });
   res.header("auth-token", token).send({ token });
+});
+
+router.post("/refresh-token", async (req, res) => {
+  const { token } = req.body;
+  if (!token)
+    return res.status(400).send({ error: true, message: "Token is required" });
+
+  const decriptedToken = jwt.decode(token);
+  if (!decriptedToken?._id)
+    return res.status(400).send({ error: true, message: "Invalid token" });
+  const refreshToken = jwt.sign(
+    { _id: decriptedToken?._id },
+    process.env.TOKEN_SECRET,
+    {
+      expiresIn: parseInt(process.env.TOKEN_EXPIRATION_TIME),
+    }
+  );
+  res.header("auth-token", token).send({ token: refreshToken });
 });
 
 module.exports = router;
