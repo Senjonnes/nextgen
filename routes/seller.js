@@ -13,8 +13,9 @@ router.post("/create", verifyToken, async (req, res) => {
     ...req?.body,
     user: req?.user?._id,
   })
-    .then((savedSeller) => {
-      res.send(savedSeller);
+    .then(async (savedSeller) => {
+      const sellerData = await savedSeller.populate("user", "name email");
+      res.send(sellerData);
     })
     .catch((err) => {
       res.status(400).send(err);
