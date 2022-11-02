@@ -8,6 +8,7 @@ dotenv.config();
 const auth = require("./routes/auth");
 const user = require("./routes/user");
 const seller = require("./routes/seller");
+const product = require("./routes/product");
 
 // connect to DB
 mongoose.connect(process.env.DB_CONNECTION, () =>
@@ -21,5 +22,6 @@ app.use(express.json());
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/user", user);
 app.use("/api/v1/seller", seller);
+app.use("/api/v1/product", product);
 
 app.listen(3000, () => console.log("App is up and running"));
