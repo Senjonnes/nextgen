@@ -24,4 +24,15 @@ router.post("/create", verifyToken, async (req, res) => {
     });
 });
 
+router.get("/products", verifyToken, async (req, res) => {
+  try {
+    const products = await Product.find()
+      .populate("seller")
+      .populate("comment");
+    res.json(products);
+  } catch (err) {
+    res.status(400).send(err);
+  }
+});
+
 module.exports = router;
